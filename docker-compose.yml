@@ -1,0 +1,14 @@
+services:
+  frontend:
+    image: komodo-wallet:latest
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: komodo-wallet
+    ports:
+      - '5173:80'
+    networks:
+      - komodo-wallet
+
+networks:
+  komodo-wallet:
