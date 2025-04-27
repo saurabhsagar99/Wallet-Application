@@ -27,7 +27,7 @@ export async function createWallet() {
       return { message: "Wallet already exists" };
     }
 
-    // Create new wallet
+   
     const response = await fetch("/api/createWallet", {
       method: "POST",
       headers: {
