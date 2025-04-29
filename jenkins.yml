@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+        IMAGE_NAME = "runevault"
+        DOCKERHUB_REPO = "docker.io/${DOCKERHUB_CREDENTIALS_USR}/runevault"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out code from GitHub...'
+                checkout scm
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo "Building Docker image ${env.IMAGE_NAME}..."
+                sh "docker build -t ${env.IMAGE_NAME}:latest ."
+            }
+        }
+
+        stage('Login to DockerHub') {
+            steps {
+                echo 'Logging in to DockerHub...'
+                sh "echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin"
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
+                echo "Tagging and pushing image to ${env.DOCKERHUB_REPO}..."
+                sh "docker tag ${env.IMAGE_NAME}:latest ${env.DOCKERHUB_REPO}:latest"
+                sh "docker push ${env.DOCKERHUB_REPO}:latest"
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment successful!'
+        }
+        failure {
+            echo 'Deployment failed.'
+        }
+    }
+}

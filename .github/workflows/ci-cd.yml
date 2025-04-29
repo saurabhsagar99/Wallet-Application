@@ -29,6 +29,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+        -name: Jenkins Integration
+        run: echo "::notice Using local Jenkins configuration from ./jenkins.yml"
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
